@@ -1,4 +1,6 @@
 ﻿using CSRedis;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,26 +9,30 @@ namespace Cache.Redis
 {
     public class RedisCoreHelper
     {
-        static CSRedisClient redisManger = null;
-        static CSRedisClient GetClient()
+        private readonly CSRedisClient redisManger = null;
+        private readonly ILogger Log;
+        private readonly IConfiguration _conf;
+        private CSRedisClient GetClient()
         {
             return redisManger;
         }
-        static RedisCoreHelper()
+        public RedisCoreHelper( ILoggerFactory loggerFactory, IConfiguration conf)
         {
-            var redisconfig = RedisConfigManager.GetConfig();
-            redisManger = new CSRedisClient(redisconfig.CoreRedisServer);      //Redis的连接字符串
+            _conf = conf;
+            var  redisconfig = conf.GetConnectionString("redis");
+            redisManger = new CSRedisClient(redisconfig);      //Redis的连接字符串
+            Log = loggerFactory.CreateLogger(nameof(RedisCoreHelper));
         }
 
         /// <summary>
         /// TradeManageMessage 和 TradeManageMessage:MQ队列
         /// </summary>
         /// <returns></returns>
-        public static bool EnQeenTradeManageMessage(string value)
+        public bool EnQeenTradeManageMessage(string value)
         {
             try
             {
-                Log.Info("yinzhou--EnQeenTradeManageMessage:" + value);
+                Log.LogInformation("yinzhou--EnQeenTradeManageMessage:" + value);
                 //从头部插入
                 GetClient().LPush("TradeManageMessage", value);
                 GetClient().LPush("TradeManageMessage:MQ", value);
@@ -34,7 +40,7 @@ namespace Cache.Redis
             }
             catch (Exception e)
             {
-                Log.Error($"EnQeenTradeManageMessage:key=TradeManageMessage:MQ,value={value}", e);
+                Log.LogError($"EnQeenTradeManageMessage:key=TradeManageMessage:MQ,value={value}", e);
                 return false;
             }
         }
@@ -42,7 +48,7 @@ namespace Cache.Redis
         /// TradeManageMessage 和 TradeManageMessage:MQ队列
         /// </summary>
         /// <returns></returns>
-        public static bool EnQeenTradeManageMessage<T>(T value)
+        public bool EnQeenTradeManageMessage<T>(T value)
         {
             try
             {
@@ -53,12 +59,12 @@ namespace Cache.Redis
             }
             catch (Exception e)
             {
-                Log.Error($"EnQeenTradeManageMessage:key=TradeManageMessage:MQ,value={value}", e);
+                Log.LogError($"EnQeenTradeManageMessage:key=TradeManageMessage:MQ,value={value}", e);
                 return false;
             }
         }
 
-        public static bool EnQueen(string key, string value)
+        public bool EnQueen(string key, string value)
         {
             try
             {
@@ -68,12 +74,12 @@ namespace Cache.Redis
             }
             catch (Exception e)
             {
-                Log.Error($"EnQueen:key={key},value={value}", e);
+                Log.LogError($"EnQueen:key={key},value={value}", e);
                 return false;
             }
         }
 
-        public static string DeQueen(string key)
+        public string DeQueen(string key)
         {
             string result = "";
             try
@@ -84,17 +90,17 @@ namespace Cache.Redis
             }
             catch (Exception e)
             {
-                Log.Error($"DeQueen:key={key}", e);
+                Log.LogError($"DeQueen:key={key}", e);
                 return result;
             }
         }
         //redis订阅模式
-        public static void Sub(string key, Action<string> action)
+        public void Sub(string key, Action<string> action)
         {
             GetClient().Subscribe((key, msg => action(msg.Body)));
         }
 
-        public static string[] DeQueenAll(string key)
+        public string[] DeQueenAll(string key)
         {
             string[] result = { };
             try
@@ -110,12 +116,12 @@ namespace Cache.Redis
             }
             catch (Exception e)
             {
-                Log.Error($"DeQueen:key={key}", e);
+                Log.LogError($"DeQueen:key={key}", e);
                 return result;
             }
         }
 
-        public static bool EnQueen<T>(string key, T value)
+        public bool EnQueen<T>(string key, T value)
         {
             try
             {
@@ -128,12 +134,12 @@ namespace Cache.Redis
             }
             catch (Exception e)
             {
-                Log.Error($"EnQueenObj:key={key},value={value}", e);
+                Log.LogError($"EnQueenObj:key={key},value={value}", e);
                 return false;
             }
         }
 
-        public static T DeQueen<T>(string key)
+        public T DeQueen<T>(string key)
         {
             T result = default(T);
             try
@@ -144,7 +150,7 @@ namespace Cache.Redis
             }
             catch (Exception e)
             {
-                Log.Error($"DeQueen:key={key}", e);
+                Log.LogError($"DeQueen:key={key}", e);
                 return result;
             }
         }
@@ -156,7 +162,7 @@ namespace Cache.Redis
         /// <param name="field"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static bool SetHash(string key, string field, string value)
+        public bool SetHash(string key, string field, string value)
         {
             try
             {
@@ -165,7 +171,7 @@ namespace Cache.Redis
             }
             catch (Exception e)
             {
-                Log.Error($"SetHash:key={key},value={value}", e);
+                Log.LogError($"SetHash:key={key},value={value}", e);
                 return false;
             }
         }
@@ -176,7 +182,7 @@ namespace Cache.Redis
         /// <param name="key">表名</param>
         /// <param name="field">键名</param>
         /// <returns></returns>
-        public static string GetHash(string key, string field)
+        public string GetHash(string key, string field)
         {
             string result = "";
             try
@@ -187,7 +193,7 @@ namespace Cache.Redis
             }
             catch (Exception e)
             {
-                Log.Error($"GetHash:key={key}", e);
+                Log.LogError($"GetHash:key={key}", e);
                 return result;
             }
         }
@@ -197,7 +203,7 @@ namespace Cache.Redis
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public static Dictionary<string, string> GetHashAll(string key)
+        public Dictionary<string, string> GetHashAll(string key)
         {
             try
             {
@@ -207,7 +213,7 @@ namespace Cache.Redis
             }
             catch (Exception e)
             {
-                Log.Error($"GetHash:key={key}", e);
+                Log.LogError($"GetHash:key={key}", e);
                 return new Dictionary<string, string>();
             }
         }
@@ -218,7 +224,7 @@ namespace Cache.Redis
         /// <param name="key">表名</param>
         /// <param name="field">键名</param>
         /// <returns></returns>
-        public static long DeleteHash(string key, string field)
+        public long DeleteHash(string key, string field)
         {
             long result = 0;
             try
@@ -228,7 +234,7 @@ namespace Cache.Redis
             }
             catch (Exception e)
             {
-                Log.Error($"GetHash:key={key}", e);
+                Log.LogError($"GetHash:key={key}", e);
                 return result;
             }
         }

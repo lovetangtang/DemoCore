@@ -105,7 +105,7 @@ namespace Web
             services.AddSingleton<IDistributedSessionCache>(new CSRedisSessionCache(new CSRedisClient("127.0.0.1:6380")));
             services.AddRedisSession();
 
-
+            services.AddScoped(typeof(RedisCoreHelper));
             #endregion
 
             // 如果不实现IDistributedCache将会异常。

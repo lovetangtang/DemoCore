@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "src\02_Ad
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quartzs", "src\02_Admin\Library\Quartzs\Quartzs.csproj", "{44EAF62C-08D6-405D-A932-1A444120CE3B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cache.Redis", "src\01_Framework\01_Cache\Cache.Redis\Cache.Redis.csproj", "{F5D6921C-9E8C-4899-A0B1-9772F1F8F004}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{44EAF62C-08D6-405D-A932-1A444120CE3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44EAF62C-08D6-405D-A932-1A444120CE3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44EAF62C-08D6-405D-A932-1A444120CE3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5D6921C-9E8C-4899-A0B1-9772F1F8F004}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5D6921C-9E8C-4899-A0B1-9772F1F8F004}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5D6921C-9E8C-4899-A0B1-9772F1F8F004}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5D6921C-9E8C-4899-A0B1-9772F1F8F004}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -66,6 +72,7 @@ Global
 		{F184442C-29FC-4737-9815-3471C129DA06} = {3CB55E01-6A3C-48A4-AB4B-E0CBC4C7C02E}
 		{1FF50945-5332-4D6E-8380-8B944658EE4A} = {3CB55E01-6A3C-48A4-AB4B-E0CBC4C7C02E}
 		{44EAF62C-08D6-405D-A932-1A444120CE3B} = {3CB55E01-6A3C-48A4-AB4B-E0CBC4C7C02E}
+		{F5D6921C-9E8C-4899-A0B1-9772F1F8F004} = {B256F989-52A2-4C14-81AC-25C33DC974FD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {47B6BE9A-58A3-4740-8A66-8C5B0F258E8E}

@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Caching.CSRedis" Version="3.6.3" />
     <PackageReference Include="CSRedisCore" Version="3.6.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.4">
@@ -33,6 +34,7 @@
     <ProjectReference Include="..\Library\Domain\Domain.csproj" />
     <ProjectReference Include="..\Library\Infrastructure\Infrastructure.csproj" />
     <ProjectReference Include="..\Library\Quartzs\Quartzs.csproj" />
+    <ProjectReference Include="..\src\01_Framework\01_Cache\Cache.Redis\Cache.Redis.csproj" />
   </ItemGroup>
 
   <ItemGroup>

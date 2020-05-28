@@ -20,6 +20,11 @@ using System.Text;
 using Application;
 using Domain.Authenticate;
 using Infrastructure;
+using Quartzs;
+using Quartz.Spi;
+using Quartz;
+using Quartz.Impl;
+using CSRedis;
 
 namespace Web
 {
@@ -83,10 +88,30 @@ namespace Web
             //services.AddScoped<IAuthenticateService, AuthenticateService>();
             //services.AddScoped<IUserService, UserService>();
             #endregion
+
+            #region 注入Redis
+            // Redis客户端要定义成单例， 不然在大流量并发收数的时候， 会造成redis client来不及释放。另一方面也确认api控制器不是单例模式，
+            var csredis = new CSRedisClient(Configuration.GetConnectionString("redis") + ",name=receiver");
+            RedisHelper.Initialization(csredis);
+            services.AddSingleton(csredis);
+            #endregion
+
+            //添加后台运行任务
+            services.AddHostedService<BackgroundJob>();
+
+            #region 注入 Quartz调度类
+            //注入 Quartz调度类
+            services.AddSingleton<QuartzStartup>();
+            services.AddTransient<UserInfoSyncjob>();      // 这里使用瞬时依赖注入
+            services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();//注册ISchedulerFactory的实例。
+
+            services.AddSingleton<IJobFactory, IOCJobFactory>();
+            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        [Obsolete]
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, Microsoft.Extensions.Hosting.IApplicationLifetime appLifetime)
         {
             if (env.IsDevelopment())
             {
@@ -112,6 +137,19 @@ namespace Web
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+
+            //获取前面注入的Quartz调度类
+            var quartz = app.ApplicationServices.GetRequiredService<QuartzStartup>();
+            appLifetime.ApplicationStarted.Register(() =>
+            {
+                quartz.Start().Wait(); //网站启动完成执行
+            });
+
+            appLifetime.ApplicationStopped.Register(() =>
+            {
+                quartz.Stop();  //网站停止完成执行
+
             });
         }
     }

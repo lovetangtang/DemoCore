@@ -35,5 +35,20 @@
     <ProjectReference Include="..\Library\Quartzs\Quartzs.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Application">
+      <HintPath>bin\Debug\netcoreapp3.1\Application.dll</HintPath>
+    </Reference>
+    <Reference Include="Domain">
+      <HintPath>bin\Debug\netcoreapp3.1\Domain.dll</HintPath>
+    </Reference>
+    <Reference Include="Infrastructure">
+      <HintPath>bin\Debug\netcoreapp3.1\Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Quartzs">
+      <HintPath>bin\Debug\netcoreapp3.1\Quartzs.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 
 </Project>

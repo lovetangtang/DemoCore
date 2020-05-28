@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Domain
+namespace Cache.Redis
 {
     public class Class1
     {

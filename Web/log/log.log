@@ -1,0 +1,9 @@
+2020-05-25 19:32:51,634 ERROR Microsoft.EntityFrameworkCore.Database.Command.? [?] - (null) (null) MESSAGE: Failed executing DbCommand (68ms) [Parameters=[], CommandType='Text', CommandTimeout='60']
+CREATE DATABASE [Test];
+ 2020-05-25 19:34:19,681 ERROR Microsoft.EntityFrameworkCore.Database.Command.? [?] - (null) (null) MESSAGE: Failed executing DbCommand (63ms) [Parameters=[], CommandType='Text', CommandTimeout='60']
+CREATE DATABASE [Test];
+ 2020-05-25 20:57:32,834  INFO Microsoft.Hosting.Lifetime.? [?] - (null) (null) MESSAGE: Application started. Press Ctrl+C to shut down.
+ 2020-05-25 20:57:32,914  INFO Microsoft.Hosting.Lifetime.? [?] - (null) (null) MESSAGE: Hosting environment: Development
+ 2020-05-25 20:57:32,918  INFO Microsoft.Hosting.Lifetime.? [?] - (null) (null) MESSAGE: Content root path: C:\Users\Administrator\source\repos\DemoCore\Web
+ 2020-05-25 20:57:33,066  WARN Web.Controllers.WeatherForecastController.? [?] - (null) (null) MESSAGE: fdffdf
+ 

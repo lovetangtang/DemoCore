@@ -15,7 +15,8 @@ namespace Web.Controllers
     public class RedisController : ControllerBase
     {
         private readonly ILogger<RedisController> _logger;
-        public RedisController(ILogger<RedisController> logger) {
+        public RedisController(ILogger<RedisController> logger)
+        {
             _logger = logger;
         }
         /// <summary>
@@ -50,6 +51,31 @@ namespace Web.Controllers
             {
                 dateTime = DateTime.Now;
                 HttpContext.Session.Set(key, JsonSerializer.SerializeToUtf8Bytes(dateTime));
+            }
+
+            _logger.LogInformation($"本次连接端口{msg},通过Session获得时间值{dateTime}");
+            return new JsonResult(dateTime);
+        }
+
+        /// <summary>
+        /// 测试redis缓存
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public IActionResult GetSetDataTest(string key)
+        {
+            var msg = HttpContext.Connection.LocalPort.ToString();
+            DateTime dateTime = default;
+            if (RedisHelper.Get(key) != null)
+            {
+                dateTime = JsonSerializer.Deserialize<DateTime>(RedisHelper.Get(key));
+                RedisHelper.Del(key);
+            }
+            else
+            {
+                dateTime = DateTime.Now;
+                RedisHelper.Set(key, JsonSerializer.SerializeToUtf8Bytes(dateTime));
             }
 
             _logger.LogInformation($"本次连接端口{msg},通过Session获得时间值{dateTime}");

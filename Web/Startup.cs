@@ -95,14 +95,15 @@ namespace Web
             #region 注入Redis
             // Redis客户端要定义成单例， 不然在大流量并发收数的时候， 会造成redis client来不及释放。另一方面也确认api控制器不是单例模式，
             string redisConnect = Configuration.GetConnectionString("redis");
-            var csredis = new CSRedisClient(redisConnect + ",name=receiver");
+            var csredis = new CSRedisClient(redisConnect);
+
             RedisHelper.Initialization(csredis);
             services.AddSingleton(csredis);
 
             services.AddSingleton<IDistributedCache>(new CSRedisCache(new CSRedisClient(redisConnect)));
 
             // 连接Redis的容器，此时6380端口。
-            services.AddSingleton<IDistributedSessionCache>(new CSRedisSessionCache(new CSRedisClient("127.0.0.1:6380")));
+            services.AddSingleton<IDistributedSessionCache>(new CSRedisSessionCache(new CSRedisClient(redisConnect)));
             services.AddRedisSession();
 
             services.AddScoped(typeof(RedisCoreHelper));

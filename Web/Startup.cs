@@ -109,6 +109,35 @@ namespace Web
             services.AddScoped(typeof(RedisCoreHelper));
             #endregion
 
+            #region 配置CAP
+            services.AddCap(x =>
+            {
+                x.UseEntityFramework<ApiDBContent>();
+
+                //启用操作面板
+                x.UseDashboard();
+                //使用RabbitMQ
+                x.UseRabbitMQ(rb =>
+                {
+                    //rabbitmq服务器地址
+                    rb.HostName = "localhost";
+
+                    rb.UserName = "guest";
+                    rb.Password = "guest";
+
+                    //指定Topic exchange名称，不指定的话会用默认的
+                    rb.ExchangeName = "cap.text.exchange";
+                });
+
+                //设置处理成功的数据在数据库中保存的时间（秒），为保证系统新能，数据会定期清理。
+                x.SucceedMessageExpiredAfter = 24 * 3600;
+
+                //设置失败重试次数
+                x.FailedRetryCount = 5;
+            });
+            #endregion
+
+
             // 如果不实现IDistributedCache将会异常。
             services.AddSession();
 
@@ -144,6 +173,8 @@ namespace Web
             //启用验证
             app.UseAuthentication();
             app.UseAuthorization();
+
+  
 
             app.UseSession();
 

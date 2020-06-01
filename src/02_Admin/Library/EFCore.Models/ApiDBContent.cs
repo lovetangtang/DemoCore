@@ -1,20 +1,32 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Options;
 
-namespace Infrastructure.Models
+namespace EFCore.Models.Models
 {
     public partial class ApiDBContent : DbContext
     {
-        public ApiDBContent()
+        private DBConnectionOption _readAndWrite = null;
+
+        public ApiDBContent(IOptionsMonitor<DBConnectionOption> options)
         {
+            this._readAndWrite = options.CurrentValue;
         }
 
-        public ApiDBContent(DbContextOptions<ApiDBContent> options)
-            : base(options)
+        private static int _iSeed = 0;//应该long
+        public ApiDBContent ToRead()
         {
+            //int num = new Random(_iSeed++).Next(0, this._readAndWrite.ReadConnectionList.Count);
+            this.Database.GetDbConnection().ConnectionString = this._readAndWrite.ReadConnectionList[_iSeed++ % this._readAndWrite.ReadConnectionList.Count];//轮询
+            //其实可以加入负载均衡策略---
+            return this;
         }
-
+        public ApiDBContent ToWrite()
+        {
+            this.Database.GetDbConnection().ConnectionString = this._readAndWrite.WriteConnection;
+            return this;
+        }
         public virtual DbSet<BankInfoLog> BankInfoLog { get; set; }
         public virtual DbSet<CfHsPayFlowInfo> CfHsPayFlowInfo { get; set; }
         public virtual DbSet<CmNumberCtl> CmNumberCtl { get; set; }
@@ -22,15 +34,14 @@ namespace Infrastructure.Models
         public virtual DbSet<CmNumberInfo> CmNumberInfo { get; set; }
         public virtual DbSet<CmNumberRule> CmNumberRule { get; set; }
         public virtual DbSet<Orders> Orders { get; set; }
+        public virtual DbSet<Published> Published { get; set; }
+        public virtual DbSet<Received> Received { get; set; }
         public virtual DbSet<WxCustomMsg> WxCustomMsg { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=.\\SQL2016;database=Test;Trusted_Connection=True;");
-            }
+            optionsBuilder.UseSqlServer(this._readAndWrite.WriteConnection);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -253,6 +264,46 @@ namespace Infrastructure.Models
                 entity.Property(e => e.Id).ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Name).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<Published>(entity =>
+            {
+                entity.ToTable("Published", "cap");
+
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(200);
+
+                entity.Property(e => e.StatusName)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Version)
+                    .IsRequired()
+                    .HasMaxLength(20);
+            });
+
+            modelBuilder.Entity<Received>(entity =>
+            {
+                entity.ToTable("Received", "cap");
+
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.Group).HasMaxLength(200);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(200);
+
+                entity.Property(e => e.StatusName)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Version)
+                    .IsRequired()
+                    .HasMaxLength(20);
             });
 
             modelBuilder.Entity<WxCustomMsg>(entity =>

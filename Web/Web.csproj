@@ -48,6 +48,7 @@
     <ProjectReference Include="..\src\01_Framework\01_Cache\Cache.Redis\Cache.Redis.csproj" />
     <ProjectReference Include="..\src\02_Admin\Library\Application\Application.csproj" />
     <ProjectReference Include="..\src\02_Admin\Library\Domain\Domain.csproj" />
+    <ProjectReference Include="..\src\02_Admin\Library\EFCore.Models\EFCore.Models.csproj" />
     <ProjectReference Include="..\src\02_Admin\Library\Infrastructure\Infrastructure.csproj" />
     <ProjectReference Include="..\src\02_Admin\Library\Quartzs\Quartzs.csproj" />
   </ItemGroup>

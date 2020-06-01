@@ -1,12 +1,15 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Infrastructure.Migrations
+namespace EFCore.Models.Migrations
 {
     public partial class Migrations : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.EnsureSchema(
+                name: "cap");
+
             migrationBuilder.CreateTable(
                 name: "BankInfoLog",
                 columns: table => new
@@ -168,6 +171,45 @@ namespace Infrastructure.Migrations
                 constraints: table =>
                 {
                 });
+
+            migrationBuilder.CreateTable(
+                name: "Published",
+                schema: "cap",
+                columns: table => new
+                {
+                    Id = table.Column<long>(nullable: false),
+                    Version = table.Column<string>(maxLength: 20, nullable: false),
+                    Name = table.Column<string>(maxLength: 200, nullable: false),
+                    Content = table.Column<string>(nullable: true),
+                    Retries = table.Column<int>(nullable: false),
+                    Added = table.Column<DateTime>(nullable: false),
+                    ExpiresAt = table.Column<DateTime>(nullable: true),
+                    StatusName = table.Column<string>(maxLength: 50, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Published", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Received",
+                schema: "cap",
+                columns: table => new
+                {
+                    Id = table.Column<long>(nullable: false),
+                    Version = table.Column<string>(maxLength: 20, nullable: false),
+                    Name = table.Column<string>(maxLength: 200, nullable: false),
+                    Group = table.Column<string>(maxLength: 200, nullable: true),
+                    Content = table.Column<string>(nullable: true),
+                    Retries = table.Column<int>(nullable: false),
+                    Added = table.Column<DateTime>(nullable: false),
+                    ExpiresAt = table.Column<DateTime>(nullable: true),
+                    StatusName = table.Column<string>(maxLength: 50, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Received", x => x.Id);
+                });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -195,6 +237,14 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "wxCustomMsg");
+
+            migrationBuilder.DropTable(
+                name: "Published",
+                schema: "cap");
+
+            migrationBuilder.DropTable(
+                name: "Received",
+                schema: "cap");
         }
     }
 }

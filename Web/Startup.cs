@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Infrastructure.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -28,6 +27,7 @@ using CSRedis;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Redis;
 using Cache.Redis;
+using EFCore.Models.Models;
 
 namespace Web
 {
@@ -43,6 +43,8 @@ namespace Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllers();
+
             #region 添加Swagger
             services.AddSwaggerGen(options =>
             {
@@ -57,9 +59,14 @@ namespace Web
             #endregion
 
             #region 添加EFCore
-            services.AddControllers();
-            var sqlConnection = Configuration.GetConnectionString("SqlServerConnection");
+            services.Configure<DBConnectionOption>(Configuration.GetSection("ConnectionStrings"));//注入多个链接
+            var sqlConnection = Configuration.GetConnectionString("WriteConnection");
             services.AddDbContext<ApiDBContent>(option => option.UseSqlServer(sqlConnection));
+
+            //读写分离
+
+            //services.AddTransient<DbContext, ApiDBContent>();
+
             #endregion
 
             #region 添加jwt认证

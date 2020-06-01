@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Infrastructure.Models
+namespace EFCore.Models.Models
 {
     public partial class WxCustomMsg
     {

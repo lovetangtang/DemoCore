@@ -1,11 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>C:\Users\Administrator\source\repos\DemoCore\Web\bin\Debug\netcoreapp3.1\</OutputPath>
+    <OutputPath>C:\Users\Administrator\source\repos\DemoCore\Web\bin\Debug\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Domain\Domain.csproj" />
+    <ProjectReference Include="..\EFCore.Models\EFCore.Models.csproj" />
   </ItemGroup>
 
 </Project>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Application;
 using EFCore.Models.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,14 +18,16 @@ namespace Web.Controllers
     {
 
         private  ApiDBContent _dbContext=null;
+        private readonly IUserService _userService;
 
         /// <summary>
         /// 测试
         /// </summary>
         /// <param name="dbContext"></param>
-        public FirstController(ApiDBContent dbContext)
+        public FirstController(ApiDBContent dbContext, UserService userService)
         {
             _dbContext = dbContext;
+            _userService = userService;
         }
         /// <summary>
         /// 获取测试数据
@@ -46,7 +49,7 @@ namespace Web.Controllers
         [Route("GetRead")]
         public JsonResult GetRead()
         {
-            return new JsonResult(_dbContext.CmNumberInfo.Take(2).ToList());
+            return new JsonResult(_userService.GetNumberList());
             //return new string[] { "value1", "value2" };
         }
 

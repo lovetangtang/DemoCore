@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application;
 using EFCore.Models.Models;
+using Infrastructure.Attributes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -47,6 +48,7 @@ namespace Web.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("GetRead")]
+        [PermissionFilter]
         public JsonResult GetRead()
         {
             return new JsonResult(_userService.GetNumberList());

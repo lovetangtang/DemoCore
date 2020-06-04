@@ -28,6 +28,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Redis;
 using Cache.Redis;
 using EFCore.Models.Models;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace Web
 {
@@ -55,6 +56,23 @@ namespace Web
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 // 添加控制器层注释，true表示显示控制器注释
                 //options.IncludeXmlComments(xmlPath, true);
+
+
+                #region Jwt
+                //开启权限小锁
+                options.OperationFilter<AddResponseHeadersFilter>();
+                options.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
+
+                //在header中添加token，传递到后台
+                options.OperationFilter<SecurityRequirementsOperationFilter>();
+                options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+                {
+                    Description = "JWT授权(数据将在请求头中进行传递)直接在下面框中输入Bearer {token}(注意两者之间是一个空格) \"",
+                    Name = "Authorization",//jwt默认的参数名称
+                    In = ParameterLocation.Header,//jwt默认存放Authorization信息的位置(请求头中)
+                    Type = SecuritySchemeType.ApiKey
+                });
+                #endregion
             });
             #endregion
 

@@ -181,9 +181,18 @@ namespace Web
             app.UseAuthentication();
             app.UseAuthorization();
 
-  
+
 
             app.UseSession();
+
+            //…Ë÷√∆Ù º“≥
+
+            DefaultFilesOptions defaultFilesOptions = new DefaultFilesOptions();
+            defaultFilesOptions.DefaultFileNames.Clear();
+            defaultFilesOptions.DefaultFileNames.Add("htmlpage.html");
+            app.UseDefaultFiles(defaultFilesOptions);
+
+            app.UseStaticFiles();
 
             app.UseRouting();
 

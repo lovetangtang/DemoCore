@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Application;
@@ -7,6 +8,10 @@ using EFCore.Models.Models;
 using Infrastructure.Attributes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Kogel.Dapper.Extension;
+using System.Data.SqlClient;
+using Kogel.Dapper.Extension.MsSql;
+using Web.Models;
 
 namespace Web.Controllers
 {
@@ -38,7 +43,7 @@ namespace Web.Controllers
         public JsonResult Get()
         {
             this._dbContext = _dbContext.ToRead();//读写分离
-            return new JsonResult(_dbContext.CmNumberInfo.Take(2).ToList());
+            return new JsonResult(_dbContext.CmNumberInfo.ToList());
             //return new string[] { "value1", "value2" };
         }
 
@@ -61,9 +66,42 @@ namespace Web.Controllers
         [HttpPost]
         public  void Post(CmNumberInfo cmNumberInfo)
         {
-            this._dbContext = _dbContext.ToWrite();//读写分离
-            _dbContext.CmNumberInfo.Add(cmNumberInfo);
-            _dbContext.SaveChanges();
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
+            #region EF插入百万数据
+            //this._dbContext = _dbContext.ToWrite();//读写分离
+            //List<CmNumberInfo> list = new List<CmNumberInfo>(); 
+            //for (int i = 0; i < 2_000_000; i++)
+            //{
+            //    CmNumberInfo cmNumber = new CmNumberInfo();
+            //    cmNumber.NumberId = i;
+            //    cmNumber.RuleId = 3;
+            //    cmNumber.TypeId = 9;
+            //    list.Add(cmNumber);
+            //    _dbContext.CmNumberInfo.Add(cmNumber);
+            //    _dbContext.SaveChanges();
+            //}
+            //耗时巨大的代码  
+            #endregion
+
+            #region Dapper插入百万数据
+            var conn = new SqlConnection("Data Source=.\\SQL2019; Database=Test; User ID=sa; Password=123456; MultipleActiveResultSets=True");
+            for (int i = 0; i < 1_000_000; i++)
+            {
+                int result = conn.CommandSet<CmNumberInfo1>()
+                  .Insert(new CmNumberInfo1()
+                  {
+                     NumberId=i,
+                     RuleId=3,
+                     TypeId=5
+                  });
+            }
+            #endregion
+            sw.Stop();
+            TimeSpan ts2 = sw.Elapsed;
+            Console.WriteLine("Stopwatch总共花费{0}ms.", ts2.TotalMilliseconds);
+            Ok("操作成功，耗时"+ ts2.TotalMilliseconds);
         }
 
         /// <summary>

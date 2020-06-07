@@ -26,6 +26,8 @@
     <PackageReference Include="DotNetCore.CAP.Dashboard" Version="3.0.4" />
     <PackageReference Include="DotNetCore.CAP.RabbitMQ" Version="3.0.4" />
     <PackageReference Include="DotNetCore.CAP.SqlServer" Version="3.0.4" />
+    <PackageReference Include="Kogel.Dapper.Extension" Version="3.1.9.8" />
+    <PackageReference Include="Kogel.Dapper.Extension.Mssql" Version="3.1.9.9" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.4">
       <PrivateAssets>all</PrivateAssets>

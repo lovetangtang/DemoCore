@@ -43,7 +43,22 @@ namespace Web.Controllers
         public JsonResult Get()
         {
             this._dbContext = _dbContext.ToRead();//读写分离
-            return new JsonResult(_dbContext.CmNumberInfo.ToList());
+            var list = _dbContext.CmNumberInfo.ToList();
+            return new JsonResult(list);
+            //return new string[] { "value1", "value2" };
+        }
+
+        /// <summary>
+        /// 获取测试数据
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("DapperGet")]
+        public JsonResult DapperGet()
+        {
+            var conn = new SqlConnection("Data Source=.\\SQL2019; Database=Test; User ID=sa; Password=123456; MultipleActiveResultSets=True");
+            var list = conn.QuerySet<CmNumberInfo1>().ToList();
+            return new JsonResult(list);
             //return new string[] { "value1", "value2" };
         }
 
